@@ -4,21 +4,23 @@
 //--------------------------------------------------------------------------
 int main()
 {
-    size_t cache_size;
+    int cache_size;
     int number_of_elementes;
     int hits = 0;
     
     std::cin >> cache_size >> number_of_elementes;
 
-    Cache<int> lfu{cache_size}; 
+    Cache lfu{cache_size}; 
 
+    std::cout << "Now start entering the elements: ";
+    
     for(int i = 0; i < number_of_elementes; i++)
     {
         int elem;
         std::cin >> elem;
-        hits = lfu.lookup_update();
+        hits = lfu.lookup_update(elem);
     }
-    
-    std::cout << "" << hits; // число попаданий
+
+    std::cout << "Number of hits: " << hits << "\n"; // число попаданий
 }
 //--------------------------------------------------------------------------
