@@ -4,13 +4,13 @@
 //--------------------------------------------------------------------------
 int main()
 {
-    int cache_size;
+    size_t cache_size;
     int number_of_elementes;
     int hits = 0;
     
     std::cin >> cache_size >> number_of_elementes;
 
-    Cache lfu{cache_size}; 
+    Cache<int> lfu{cache_size}; 
 
     std::cout << "Now start entering the elements: ";
 

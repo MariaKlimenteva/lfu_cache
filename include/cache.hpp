@@ -6,16 +6,16 @@
 #include <unordered_map>
 #include <iostream>
 //--------------------------------------------------------------------------
-// template<typename T, typename KeyT = int>
+template<typename T, typename KeyT = int>
 class Cache 
 {
     public:
-    Cache(int size): size_(size) {} 
+    Cache(size_t size): size_(size) {} 
 
     private:
-    int size_; 
-    std::list<int> cache_;
-    std::unordered_map<int, int> hash_;
+    size_t size_; 
+    std::list<T> cache_;
+    std::unordered_map<T, KeyT> hash_;
 
     bool cache_is_full()
     {
@@ -23,7 +23,7 @@ class Cache
     }
 
     public:
-    bool lookup_update(int element) // карта = ключ + значение
+    bool lookup_update(T element) // карта = ключ + значение
     {
         int hits = 0;
         int counter = 1;
@@ -43,8 +43,8 @@ class Cache
             }
             else
             {
-                std::pair<int, int> min = *std::min_element(hash_.begin(), hash_.end(),
-                [](const std::pair<const int, int> &a, const std::pair<const int, int> &b) 
+                std::pair<T, KeyT> min = *std::min_element(hash_.begin(), hash_.end(),
+                [](const std::pair<const T, KeyT> &a, const std::pair<const T, KeyT> &b) 
                 { return a.second < b.second; }); //компаратор с лямбда выражением
                 std::cout << "" << min.first;
                 return false;
