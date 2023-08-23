@@ -23,7 +23,7 @@ class Cache
     }
 
     public:
-    bool lookup_update(T element) // карта = ключ + значение
+    bool lookup_update(T element) 
     {
         int hits = 0;
         int counter = 1;
@@ -38,15 +38,15 @@ class Cache
         {
             if(auto iter = hash_.find(element); iter != hash_.end())
             {
-                hash_[element]++;   // увеличили счетчик
+                hash_[element]++;   
                 return true;
             }
             else
             {
                 std::pair<T, KeyT> min = *std::min_element(hash_.begin(), hash_.end(),
                 [](const std::pair<const T, KeyT> &a, const std::pair<const T, KeyT> &b) 
-                { return a.second < b.second; }); //компаратор с лямбда выражением
-                std::cout << "" << min.first;
+                { return a.second < b.second; }); 
+                // std::cout << "" << min.first << "\n";
                 return false;
             }
         }
