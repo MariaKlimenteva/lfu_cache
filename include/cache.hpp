@@ -23,7 +23,7 @@ class Cache
     }
 
     public:
-    int lookup_update(int element) // карта = ключ + значение
+    bool lookup_update(int element) // карта = ключ + значение
     {
         int hits = 0;
         int counter = 1;
@@ -31,36 +31,25 @@ class Cache
         if(!cache_is_full())
         {
             cache_.emplace_back(element);
-
-            hash_.insert({element, counter});
+            hash_.emplace(element, counter);
+            return false;
         }
         else
         {
             if(auto iter = hash_.find(element); iter != hash_.end())
             {
                 hash_[element]++;   // увеличили счетчик
-                hits++; //увеличили число попаданий
+                return true;
             }
             else
             {
                 std::pair<int, int> min = *std::min_element(hash_.begin(), hash_.end(),
                 [](const std::pair<const int, int> &a, const std::pair<const int, int> &b) 
-                { return a.second < b.second; });//компаратор с лямбда выражением
+                { return a.second < b.second; }); //компаратор с лямбда выражением
                 std::cout << "" << min.first;
+                return false;
             }
         }
-
-        return hits; //возвращает число попаданий
     }   
 };
-
 //--------------------------------------------------------------------------
-// Алгоритм кэширования LFU
-// 1. Мы получаем новый элемент (значение) -> пробегаемся по списку
-
-// 2. Если есть этот элемент в списке -> увеличиваем ключ
-
-// 3. Если нет -> пробегаемся по хэшу и находим самый маленький ключ
-//             идем по итератору связанному с этим ключом в список и делаем замену
-
-// попадания это ситуация пункт 2

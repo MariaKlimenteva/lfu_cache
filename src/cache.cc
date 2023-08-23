@@ -13,12 +13,15 @@ int main()
     Cache lfu{cache_size}; 
 
     std::cout << "Now start entering the elements: ";
-    
+
     for(int i = 0; i < number_of_elementes; i++)
     {
         int elem;
         std::cin >> elem;
-        hits = lfu.lookup_update(elem);
+        if(lfu.lookup_update(elem))
+        {
+            hits += 1;
+        };
     }
 
     std::cout << "Number of hits: " << hits << "\n"; // число попаданий
