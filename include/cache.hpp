@@ -46,7 +46,11 @@ class Cache
                 std::pair<T, KeyT> min = *std::min_element(hash_.begin(), hash_.end(),
                 [](const std::pair<const T, KeyT> &a, const std::pair<const T, KeyT> &b) 
                 { return a.second < b.second; }); 
-                // std::cout << "" << min.first << "\n";
+                // нашли элемент с минимальным счетчиком (если их несколько то берется рандомный) в unordered_map
+                // заменяем значение элемента на новый элемент который кладем и делаем counter = 1
+                min.first = element;
+                min.second = 1;
+                
                 return false;
             }
         }
