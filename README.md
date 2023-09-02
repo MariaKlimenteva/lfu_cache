@@ -5,6 +5,4 @@ This is an implementation of **LFU caching** (*least frequently used*). LFU is a
 - ***Practical LFU***: there is a counter for the items stored in cache. The counter is forgotten if the item is evicted.
 
 #### Testing system
-
-### Usage
-
+I use the Google testing system, using it to check the value of outliers, where the data is taken from the file.
