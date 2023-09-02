@@ -3,5 +3,8 @@ This is an implementation of **LFU caching** (*least frequently used*). LFU is a
 
 - ***Ideal LFU***: there is a counter for each item in the catalogue
 - ***Practical LFU***: there is a counter for the items stored in cache. The counter is forgotten if the item is evicted.
+
+#### Testing system
+
 ### Usage
- 
+
