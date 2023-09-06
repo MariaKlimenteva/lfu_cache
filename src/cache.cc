@@ -46,15 +46,19 @@ int main()
     std::cin >> cache_size >> number_of_elementes;
 
     Cache<int> lfu{cache_size};
+    Perfect_Cache<int> perfect{cache_size};
 
     for(int i = 0; i < number_of_elementes; i++)
     {
         int elem;
         std::cin >> elem;
+
         if(lfu.lookup_update(elem))
         {
             hits += 1;
         };
+
+        perfect.make_list(elem, number_of_elementes);
     }
 
     std::cout << hits << "\n";
