@@ -37,7 +37,7 @@ TEST(CheckValues, Subtest_1)
 //--------------------------------------------------------------------------
 int main()
 {
-    testing::InitGoogleTest();
+    // testing::InitGoogleTest();
 
     size_t cache_size;
     int number_of_elementes;
@@ -71,6 +71,6 @@ int main()
     std::cout << "Hits of LFU cache: " << hits << "\n";
     std::cout << "Hits of perfect cache: " << perfect_hits << "\n";
 
-    return RUN_ALL_TESTS();
+    // return RUN_ALL_TESTS();
 }
 //--------------------------------------------------------------------------

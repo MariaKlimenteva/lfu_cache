@@ -17,7 +17,6 @@ class Cache
     size_t size_; 
     std::list<T> cache_;
     std::unordered_map<T, KeyT> hash_;
-    // std::unordered_map<T, std::pair<int, int>> perfect_hash;
 
     bool cache_is_full()
     {
@@ -79,10 +78,7 @@ class Perfect_Cache
 
     void make_list(T element)
     {
-        // for(int i = 0; i < number_of_elements; i++)
-        // {
-            all_elements.emplace_back(element);
-        // }
+        all_elements.emplace_back(element);
     }
 
     void make_map()
