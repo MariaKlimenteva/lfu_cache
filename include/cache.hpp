@@ -97,7 +97,7 @@ class Perfect_Cache
 
     bool perfect_hit_counter(T element, int number_of_elements)
     {
-        if(cache_is_full)
+        if(cache_is_full())
         {
             auto it = std::find(perfect_cache.begin(), perfect_cache.end(), element);
             if(it != perfect_cache.end())
