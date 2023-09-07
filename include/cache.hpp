@@ -5,6 +5,7 @@
 #include <list>
 #include <unordered_map>
 #include <iostream>
+#include <cmath>
 //--------------------------------------------------------------------------
 template<typename T, typename KeyT = int>
 class Cache 
@@ -76,21 +77,22 @@ class Perfect_Cache
         return perfect_cache.size() == size_;
     }
 
-    void make_list(T element, int number_of_elements)
+    void make_list(T element)
     {
-        for(int i = 0; i < number_of_elements; i++)
-        {
+        // for(int i = 0; i < number_of_elements; i++)
+        // {
             all_elements.emplace_back(element);
-        }
+        // }
     }
 
     void make_map()
     {
-        for(auto it = all_elements.begin(); it < all_elements.end(); ++it)
+        for(auto it = all_elements.begin(); it != all_elements.end(); ++it)
         {
             if (duplicate_elements.find(*it) != duplicate_elements.end()) 
             {
-                duplicate_elements[*it] += it;
+                auto index = std::distance(all_elements.begin(), it);
+                duplicate_elements[*it] += index;
             }
         }
     }
@@ -137,6 +139,7 @@ class Perfect_Cache
             perfect_cache.emplace_back(element);
             return false;
         }
+        return false;
     }
 };
 //--------------------------------------------------------------------------

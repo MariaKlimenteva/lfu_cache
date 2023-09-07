@@ -42,6 +42,7 @@ int main()
     size_t cache_size;
     int number_of_elementes;
     int hits = 0;
+    int perfect_hits = 0;
     
     std::cin >> cache_size >> number_of_elementes;
 
@@ -56,12 +57,19 @@ int main()
         if(lfu.lookup_update(elem))
         {
             hits += 1;
-        };
+        }
 
-        perfect.make_list(elem, number_of_elementes);
+        perfect.make_list(elem);
+        perfect.make_map();
+
+        if(perfect.perfect_hit_counter(elem, number_of_elementes))
+        {
+            perfect_hits += 1;
+        }
     }
 
-    std::cout << hits << "\n";
+    std::cout << "Hits of LFU cache: " << hits << "\n";
+    std::cout << "Hits of perfect cache: " << perfect_hits << "\n";
 
     return RUN_ALL_TESTS();
 }
