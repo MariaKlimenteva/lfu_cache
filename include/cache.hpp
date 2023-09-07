@@ -66,10 +66,15 @@ class Perfect_Cache
     size_t size_; 
     std::list<T> all_elements;
     std::list<T> perfect_cache;
-    std::unordered_map<T, int> duplicate_elements;
+    std::unordered_map<T, std::string> duplicate_elements;
 
     public:
     Perfect_Cache(size_t size): size_(size) {} 
+
+    bool cache_is_full()
+    {
+        return perfect_cache.size() == size_;
+    }
 
     void make_list(T element, int number_of_elements)
     {
@@ -79,22 +84,58 @@ class Perfect_Cache
         }
     }
 
-    void make_map(int number_of_elements)
+    void make_map()
     {
-        all_elements.sort();
-        std::cout << all_elements;
-        auto it = unique(all_elements.begin(), all_elements.end(), [] (const int& a, const int& b) 
+        for(auto it = all_elements.begin(); it < all_elements.end(); ++it)
         {
-            return a == b; 
-        });
+            if (duplicate_elements.find(*it) != duplicate_elements.end()) 
+            {
+                duplicate_elements[*it] += it;
+            }
+        }
+    }
 
-        all_elements.erase(it, all_elements.end());
-
-        for(auto elem: all_elements)
+    bool perfect_hit_counter(T element, int number_of_elements)
+    {
+        if(cache_is_full)
         {
-            // найти индекс где находились повторяющиеся элементы
-            
-            // duplicate_elements.insert({iterator, elem});
+            auto it = std::find(perfect_cache.begin(), perfect_cache.end(), element);
+            if(it != perfect_cache.end())
+            {
+                return true;
+            }
+            else
+            {
+                for(T elem : perfect_cache)
+                {
+                    int min = number_of_elements;
+
+                    if(duplicate_elements.find(elem) == duplicate_elements.end()) // если в списке есть элемент которого нет в карте, те он не повт
+                    {
+                        std::replace(perfect_cache.begin(), perfect_cache.end(), elem, element);
+                        return false;
+                        break;
+                    }
+                    else // если все значения в perfect_cache повторятся в будущем
+                    {
+                        auto length = duplicate_elements[elem].length(); //узнали, насколько длинное число
+                        auto index = std::stoi(duplicate_elements[elem]); // получили само число
+
+                        if(index/pow(10, length - 1) < min)
+                        {
+                            min = index/pow(10, length - 1);
+                        }
+                        std::replace(perfect_cache.begin(), perfect_cache.end(), elem, element);
+                        return false;
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            perfect_cache.emplace_back(element);
+            return false;
         }
     }
 };
