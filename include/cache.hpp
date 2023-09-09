@@ -59,7 +59,7 @@ class Cache
     } 
 };
 //--------------------------------------------------------------------------
-template<typename T, typename KeyT = int>
+template<typename T>
 class Perfect_Cache
 {
     private:
@@ -85,7 +85,7 @@ class Perfect_Cache
     {
         for(auto it = all_elements.begin(); it != all_elements.end(); ++it)
         {
-            if (duplicate_elements.find(*it) != duplicate_elements.end()) //нашли элемент в map
+            if (duplicate_elements.find(*it) != duplicate_elements.end()) 
             {
                 auto index = std::distance(all_elements.begin(), it);
                 duplicate_elements[*it].emplace_back(index);
@@ -96,7 +96,7 @@ class Perfect_Cache
             }
         }
 
-        for (auto it = duplicate_elements.begin(); it != duplicate_elements.end(); ) //удалим все неповт эл-ты
+        for (auto it = duplicate_elements.begin(); it != duplicate_elements.end(); ) 
         {
             if (it->second == std::vector<int>{0}) 
             {
@@ -115,12 +115,12 @@ class Perfect_Cache
 
         for(T elem : perfect_cache)
         {
-            if(duplicate_elements.find(elem) == duplicate_elements.end()) // элемент не повторяющийся
+            if(duplicate_elements.find(elem) == duplicate_elements.end()) 
             {
                 std::replace(perfect_cache.begin(), perfect_cache.end(), elem, element);
                 break;
             }
-            else // если все значения в perfect_cache повторятся в будущем
+            else 
             {
                 if(duplicate_elements[elem].at(1) > max)
                 {
@@ -150,21 +150,25 @@ class Perfect_Cache
 
     bool perfect_hit_counter(T element, int number_of_elements)
     {
-        auto it = std::find(perfect_cache.begin(), perfect_cache.end(), element);
+        auto perfect_cache_it = std::find(perfect_cache.begin(), perfect_cache.end(), element);
 
-        if(it != perfect_cache.end()) //нашли в кэше этот элемент
+        if(perfect_cache_it != perfect_cache.end()) //нашли в кэше этот элемент
         {
-            // if(duplicate_elements[*it].size() > 1)
-            // {
-            //     duplicate_elements[*it].erase(duplicate_elements[*it].begin() + 1);
-            // }
-            // else
-            // {
-            //     auto iter = duplicate_elements.find(*it);
-            //     duplicate_elements.erase(iter);
-            // }
+            if(duplicate_elements[*perfect_cache_it].size() > 1)
+            {
+                duplicate_elements[*perfect_cache_it].erase(duplicate_elements[*perfect_cache_it].begin() + 1);
+            }
+            else
+            {
+                auto iter = duplicate_elements.find(*perfect_cache_it);
+                if(iter != duplicate_elements.end())
+                {
+                    duplicate_elements.erase(iter);
+                }
+            }
+            
             return true;
-        }
+        } 
         else
         {
             return not_a_hit(element, number_of_elements);
