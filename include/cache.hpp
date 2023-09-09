@@ -84,30 +84,46 @@ class Perfect_Cache
     {
         for(auto it = all_elements.begin(); it != all_elements.end(); ++it)
         {
-            if (duplicate_elements.find(*it) != duplicate_elements.end()) 
+            if (duplicate_elements.find(*it) != duplicate_elements.end()) //нашли элемент в map
             {
                 auto index = std::distance(all_elements.begin(), it);
                 duplicate_elements[*it] += index;
+            }
+            else
+            {
+                duplicate_elements.emplace(*it, std::to_string(0));
+            }
+        }
+        for (auto it = duplicate_elements.begin(); it != duplicate_elements.end(); ) //удалить все элементы со значением 0 по ключу == не повторяющиеся
+        {
+            if (it->second == std::to_string(0)) 
+            {
+                it = duplicate_elements.erase(it);
+            } 
+            else 
+            {
+                ++it;
             }
         }
     }
 
     bool perfect_hit_counter(T element, int number_of_elements)
     {
-        if(cache_is_full())
+        auto it = std::find(perfect_cache.begin(), perfect_cache.end(), element);
+
+        if(it != perfect_cache.end()) //нашли в кэше этот элемент
         {
-            auto it = std::find(perfect_cache.begin(), perfect_cache.end(), element);
-            if(it != perfect_cache.end())
-            {
-                return true;
-            }
-            else
+            return true;
+        }
+        else //не нашли
+        {
+            if(cache_is_full())
             {
                 for(T elem : perfect_cache)
                 {
                     int min = number_of_elements;
 
-                    if(duplicate_elements.find(elem) == duplicate_elements.end()) // если в списке есть элемент которого нет в карте, те он не повт
+                    if(duplicate_elements.find(elem) == duplicate_elements.end()) // элемент не повторяющийся
                     {
                         std::replace(perfect_cache.begin(), perfect_cache.end(), elem, element);
                         return false;
@@ -115,24 +131,25 @@ class Perfect_Cache
                     }
                     else // если все значения в perfect_cache повторятся в будущем
                     {
-                        auto length = duplicate_elements[elem].length(); //узнали, насколько длинное число
-                        auto index = std::stoi(duplicate_elements[elem]); // получили само число
+                        auto length = duplicate_elements[elem].length() - 1; //в длине строки посчитали первый 0, поэтому вычитаем 1
+                        auto index = std::stoi(duplicate_elements[elem], nullptr, 10); // получили само число 
 
-                        if(index/pow(10, length - 1) < min)
+                        if(index/pow(10, length - 1) < min) // находим ближайшее по индексу
                         {
                             min = index/pow(10, length - 1);
+                            duplicate_elements[elem] = index - pow(10, length - 1);
+                            std::replace(perfect_cache.begin(), perfect_cache.end(), elem, element);
+                            return false;
+                            break;
                         }
-                        std::replace(perfect_cache.begin(), perfect_cache.end(), elem, element);
-                        return false;
-                        break;
                     }
                 }
             }
-        }
-        else
-        {
-            perfect_cache.emplace_back(element);
-            return false;
+            else
+            {
+                perfect_cache.emplace_back(element);
+                return false;
+            }
         }
         return false;
     }
