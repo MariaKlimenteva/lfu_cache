@@ -24,22 +24,21 @@ class Cache
     }
 
     public:
-    bool lookup_update(T element) 
+    bool lookup_update(T element)
     {
         int counter = 0;
-
-        if(!cache_is_full())
+        if(auto iter = hash_.find(element); iter != hash_.end())
         {
-            cache_.emplace_back(element);
-            hash_.emplace(element, counter);
-            return false;
+            hash_[element]++;
+            return true;
         }
         else
         {
-            if(auto iter = hash_.find(element); iter != hash_.end())
+            if(!cache_is_full())
             {
-                hash_[element]++;
-                return true;
+                cache_.emplace_back(element);
+                hash_.emplace(element, counter);
+                return false;
             }
             else
             {
@@ -50,8 +49,8 @@ class Cache
                 cache_.remove(min.first);
                 cache_.emplace_back(element);
 
-                min.first = element;
-                min.second = 0;
+                hash_.erase(min.first);
+                hash_.emplace(element, counter);
                 
                 return false;
             }
