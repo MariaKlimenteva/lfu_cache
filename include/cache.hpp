@@ -154,18 +154,18 @@ class Perfect_Cache
 
         if(perfect_cache_it != perfect_cache.end()) //нашли в кэше этот элемент
         {
-            if(duplicate_elements[*perfect_cache_it].size() > 1)
-            {
-                duplicate_elements[*perfect_cache_it].erase(duplicate_elements[*perfect_cache_it].begin() + 1);
-            }
-            else
-            {
-                auto iter = duplicate_elements.find(*perfect_cache_it);
-                if(iter != duplicate_elements.end())
-                {
-                    duplicate_elements.erase(iter);
-                }
-            }
+            // if(duplicate_elements[*perfect_cache_it].size() > 1)
+            // {
+            //     duplicate_elements[*perfect_cache_it].erase(duplicate_elements[*perfect_cache_it].begin() + 1);
+            // }
+            // else
+            // {
+            //     auto iter = duplicate_elements.find(*perfect_cache_it);
+            //     if(iter != duplicate_elements.end())
+            //     {
+            //         duplicate_elements.erase(iter);
+            //     }
+            // }
             
             return true;
         } 
