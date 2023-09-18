@@ -39,53 +39,56 @@ int main(int argc, char** argv)
 {
     size_t cache_size;
     int number_of_elements;
-    int hits = 0;
-    int perfect_hits = 0;
+    int hits;
+    int perfect_hits;
     //----------------------------------------------------------------------
     #ifdef TEST_PARAM
-    // std::cout<<"iujijij"<<std::endl;
     std::ifstream tests;
     tests.open(argv[1]);
-    // std::cout<<"iujijij"<<std::endl;
 
     int number_of_tests;
     tests >> number_of_tests;
-    // while(!tests.eof())
-    // {
-    for(int i = 0; i < number_of_elements; i++)
+
+    for(int i = 0; i < number_of_tests; i++)
     {
-        if(tests)
-        {
-            tests >> cache_size >> number_of_elements;
-        }
+        tests >> cache_size >> number_of_elements;
+
+        hits = 0;
+        perfect_hits = 0;
 
         Cache<int> lfu{cache_size};
         Perfect_Cache<int> perfect{cache_size};
-        
-        std::cout<<"iujijij"<<std::endl;
         
         for(int i = 0; i < number_of_elements; i++)
         {
             int elem;
             tests >> elem;
+            // std::cout << elem;
+
             if(lfu.lookup_update(elem))
             {
                 hits += 1;
             }
-
             perfect.make_list(elem);
         }
-        
+                
         perfect.make_map();
 
         for(auto elem : perfect.all_elements)
         {
+            
             if(perfect.perfect_hit_counter(elem, number_of_elements))
             {
                 perfect_hits += 1;
             }
         }
+
+        std::cout << hits << " ";
+        std::cout << perfect_hits << "\n";
     }
+    
+    tests.close();
+
     #endif
     //----------------------------------------------------------------------
     #ifndef TEST_PARAM
@@ -115,9 +118,11 @@ int main(int argc, char** argv)
             perfect_hits += 1;
         }
     }
-    #endif
-    //----------------------------------------------------------------------
+
     std::cout << hits << " ";
     std::cout << perfect_hits << "\n";
+
+    #endif
+    //----------------------------------------------------------------------
 }
 //--------------------------------------------------------------------------

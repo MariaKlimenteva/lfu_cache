@@ -15,8 +15,9 @@ target_link_libraries(RELEASE gtest gmock pthread)
 file(GLOB SRC "src/*")
 add_executable(TEST ${SRC})
 target_include_directories(TEST PRIVATE "include")
-target_link_libraries(TEST gtest gmock pthread)
-target_compile_definitions(TEST PRIVATE TEST_PARAM)
-add_custom_target(BASH_TEST DEPENDS TEST
 
-)
+target_compile_definitions(TEST PRIVATE TEST_PARAM)
+
+add_custom_target(RUN_TEST DEPENDS TEST
+        WORKING_DIRECTORY ../
+        COMMAND ./test.sh)
