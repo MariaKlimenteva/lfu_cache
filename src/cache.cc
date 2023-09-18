@@ -43,10 +43,16 @@ int main(int argc, char** argv)
     int perfect_hits = 0;
     //----------------------------------------------------------------------
     #ifdef TEST_PARAM
+    // std::cout<<"iujijij"<<std::endl;
     std::ifstream tests;
     tests.open(argv[1]);
+    // std::cout<<"iujijij"<<std::endl;
 
-    while(!tests.eof())
+    int number_of_tests;
+    tests >> number_of_tests;
+    // while(!tests.eof())
+    // {
+    for(int i = 0; i < number_of_elements; i++)
     {
         if(tests)
         {
@@ -55,7 +61,9 @@ int main(int argc, char** argv)
 
         Cache<int> lfu{cache_size};
         Perfect_Cache<int> perfect{cache_size};
-
+        
+        std::cout<<"iujijij"<<std::endl;
+        
         for(int i = 0; i < number_of_elements; i++)
         {
             int elem;
