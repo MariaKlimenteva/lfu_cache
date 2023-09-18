@@ -52,7 +52,7 @@ int main(int argc, char** argv)
     for(int i = 0; i < number_of_tests; i++)
     {
         tests >> cache_size >> number_of_elements;
-
+        // std::cout << cache_size << number_of_elements;
         hits = 0;
         perfect_hits = 0;
 
