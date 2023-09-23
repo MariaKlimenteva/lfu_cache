@@ -65,6 +65,8 @@ class Perfect_Cache
     private:
     size_t size_; 
     std::list<T> perfect_cache;
+
+    public:
     std::unordered_map<T, std::vector<int>> duplicate_elements;
 
     public:
@@ -79,6 +81,21 @@ class Perfect_Cache
     void make_list(T element)
     {
         all_elements.emplace_back(element);
+    }
+
+    void print_map()
+    {
+        for (const auto& pair : duplicate_elements) 
+        {
+            std::cout << pair.first << ": ";
+            for (const auto& element : pair.second) 
+            {
+                std::cout << element << " ";
+                
+            }
+            std::cout << "size: "<< pair.second.size(); 
+            std::cout << std::endl;
+        }
     }
 
     void make_map()
@@ -153,20 +170,7 @@ class Perfect_Cache
         auto perfect_cache_it = std::find(perfect_cache.begin(), perfect_cache.end(), element);
 
         if(perfect_cache_it != perfect_cache.end()) //нашли в кэше этот элемент
-        {
-            // if(duplicate_elements[*perfect_cache_it].size() > 1)
-            // {
-            //     duplicate_elements[*perfect_cache_it].erase(duplicate_elements[*perfect_cache_it].begin() + 1);
-            // }
-            // else
-            // {
-            //     auto iter = duplicate_elements.find(*perfect_cache_it);
-            //     if(iter != duplicate_elements.end())
-            //     {
-            //         duplicate_elements.erase(iter);
-            //     }
-            // }
-            
+        {            
             return true;
         } 
         else
@@ -174,5 +178,24 @@ class Perfect_Cache
             return not_a_hit(element, number_of_elements);
         }
     }
+
+    // void change_map_values(T elem, std::list<int>::iterator current_iterator, int index)
+    // {
+    //     if(duplicate_elements.find(elem) != duplicate_elements.end())//если элемент есть в map
+    //     {
+    //         // for (auto key : duplicate_elements) 
+    //         // {
+    //         //     for (auto element : key.second) 
+    //         //     {
+    //         //         if(element < index)
+    //         //         {
+    //         //             duplicate_elements[elem].erase(duplicate_elements.begin() + 1); // удаляем второй элемент вектора
+    //         //         }
+    //         //     }
+    //         // }
+    //         auto vector = current_iterator -> second;
+    //         vector.erase(std::remove(vector.begin(), vector.end(), index), vector.end()); // 
+    //     }
+    // }
 };
 //--------------------------------------------------------------------------

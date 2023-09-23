@@ -6,36 +6,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 //--------------------------------------------------------------------------
-// TEST(CheckValues, Subtest_1) 
-// {
-//     std::ifstream tests_file;
-//     tests_file.open("tests.txt");
-
-//     size_t cache_size;
-//     int number_of_elementes;
-//     int hits = 0;
-
-//     Cache<int> lfu{cache_size};
-
-//     tests_file >> cache_size >> number_of_elementes;
-
-//     for(int i = 0; i < number_of_elementes; i++)
-//     {
-//         int elem;
-//         tests_file >> elem;
-//         if(lfu.lookup_update(elem))
-//         {
-//             hits += 1;
-//         };
-//     }
-
-//     int answer;
-//     tests_file >> answer;
-//     EXPECT_EQ(hits, answer);
-//     tests_file.close();
-// }
-//--------------------------------------------------------------------------
-int main(int argc, char** argv)
+int main(int argc, char** argv) 
 {
     size_t cache_size;
     int number_of_elements;
@@ -52,7 +23,6 @@ int main(int argc, char** argv)
     for(int i = 0; i < number_of_tests; i++)
     {
         tests >> cache_size >> number_of_elements;
-        // std::cout << cache_size << number_of_elements;
         hits = 0;
         perfect_hits = 0;
 
@@ -63,7 +33,6 @@ int main(int argc, char** argv)
         {
             int elem;
             tests >> elem;
-            // std::cout << elem;
 
             if(lfu.lookup_update(elem))
             {
@@ -110,6 +79,7 @@ int main(int argc, char** argv)
         perfect.make_list(elem);
     }
     perfect.make_map();
+    perfect.print_map();
 
     for(auto elem : perfect.all_elements)
     {
@@ -117,6 +87,25 @@ int main(int argc, char** argv)
         {
             perfect_hits += 1;
         }
+
+        auto current_iterator = std::find(perfect.all_elements.begin(), perfect.all_elements.end(), elem);
+        int index = std::distance(perfect.all_elements.begin(), current_iterator);
+
+        if(perfect.duplicate_elements.find(elem) != perfect.duplicate_elements.end())
+        {
+            if(perfect.duplicate_elements[elem].size() > 2)
+            {
+                perfect.duplicate_elements[elem].erase(std::next(perfect.duplicate_elements[elem].begin()));
+            }
+            else
+            {
+                perfect.duplicate_elements.erase(elem);
+            }
+        }
+        
+
+        // perfect.change_map_values(elem, current_iterator, index);
+        // если этот итератор больше чем значение в векторе у данного elem - значение надо удалить из вектора
     }
 
     std::cout << hits << " ";
