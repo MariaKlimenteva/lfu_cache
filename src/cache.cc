@@ -80,7 +80,7 @@ int main(int argc, char** argv)
         perfect.make_list(elem);
     }
     perfect.make_map();
-    perfect.print_map();
+    // perfect.print_map();
 
     for(auto elem : perfect.all_elements)
     {
@@ -89,8 +89,6 @@ int main(int argc, char** argv)
             perfect_hits += 1;
         }
         perfect.update_map(elem);
-        std::cout << "----------" << std::endl;
-        perfect.print_map();
     }
 
     std::cout << hits << " ";

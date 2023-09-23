@@ -100,7 +100,7 @@ class Perfect_Cache
     {
         for(T elem : perfect_cache)
         {
-            std::cout << " " << elem << std::endl;
+            std::cout << " " << elem << std::endl;;
         }
     }
     //--------------------------------------------------------------------------
@@ -128,54 +128,32 @@ class Perfect_Cache
     void swap(T element)
     {
         int max = 0; 
-        //мб стоит вытянуть первые два ифа из цикла(мб вообще из свопа)
-
-        // if(!find_element_in_map(element))
-        // {
-        //     return 0; 
-        // }
-
-        // if(find_element_in_map(element))
-        // {
-            for(T elem : perfect_cache)
+        T max_elem;
+        
+        for(T elem : perfect_cache)
+        {
+            if(duplicate_elements[elem].size() > 0)
             {
-                if(duplicate_elements[elem].size() > 2)
+                if(duplicate_elements[elem].at(0) > max)
                 {
-                    if(duplicate_elements[elem].at(0) > max)
-                    {
-                        max = duplicate_elements[elem].at(0);
-                    }
-                    else
-                    {
-                        std::replace(perfect_cache.begin(), perfect_cache.end(), elem, element);
-                        break;
-                    }
+                    max = duplicate_elements[elem].at(0);
+                    max_elem = elem;
                 }
-
             }
-        // }
+            else
+            {
+                max_elem = elem;
+                break;
+            }
+        }
 
-        // for(T elem : perfect_cache)
-        // {
-        //     if(!find_element_in_map(elem)) // не нужен кажись
-        //     {
-        //         std::replace(perfect_cache.begin(), perfect_cache.end(), elem, element);
-        //         break;
-        //     }
-        //     else 
-        //     {
-        //         if(duplicate_elements[elem].at(1) > max)
-        //         {
-        //             max = duplicate_elements[elem].at(1);
-        //         }
-        //         else
-        //         {
-        //             std::replace(perfect_cache.begin(), perfect_cache.end(), elem, element);
-        //             break;
-        //         }
-        //     }
-        // }
-        // return 0;
+        if(duplicate_elements[element].size() > 1)
+        {
+            if(duplicate_elements[element].at(1) < max)
+            {
+                std::replace(perfect_cache.begin(), perfect_cache.end(), max_elem, element);
+            }
+        }
     }
     //--------------------------------------------------------------------------
     bool find_element_in_map(T element)
@@ -192,16 +170,13 @@ class Perfect_Cache
     //--------------------------------------------------------------------------
     void not_a_hit(T element)
     {
-        if(cache_is_full() && (find_element_in_map(element)))
+        if(cache_is_full())
         {
             swap(element);
         }
         else 
         {
-            if(find_element_in_map(element))
-            {
-                perfect_cache.emplace_back(element);
-            }
+            perfect_cache.emplace_back(element);
         }
     }
     //--------------------------------------------------------------------------
@@ -215,7 +190,10 @@ class Perfect_Cache
         } 
         else
         {
-            not_a_hit(element);
+            if(find_element_in_map(element))
+            {
+                not_a_hit(element);
+            }
             return false; 
         }
     }
@@ -233,23 +211,6 @@ class Perfect_Cache
                 duplicate_elements.erase(elem);
             }
         }
-
-        // for (auto it = duplicate_elements.begin(); it != duplicate_elements.end(); ) 
-        // {
-        //     if(it->second.size() < 2)
-        //     {
-        //         it = duplicate_elements.erase(it);
-        //     } 
-        //     else 
-        //     {
-        //         ++it;
-        //     }
-        // }
-
-        // if(duplicate_elements[elem] == std::vector<int> {0})
-        // {
-        //     std::cout << "reijngjke";
-        // }
     }
 };
 //--------------------------------------------------------------------------
