@@ -70,17 +70,17 @@ class Perfect_Cache
     public:
     std::list<T> all_elements;
     Perfect_Cache(size_t size): size_(size) {} 
-
+    //--------------------------------------------------------------------------
     bool cache_is_full()
     {
         return perfect_cache.size() == size_;
     }
-
+    //--------------------------------------------------------------------------
     void make_list(T element)
     {
         all_elements.emplace_back(element);
     }
-
+    //--------------------------------------------------------------------------
     void print_map()
     {
         for (const auto& pair : duplicate_elements) 
@@ -95,7 +95,7 @@ class Perfect_Cache
             std::cout << std::endl;
         }
     }
-
+    //--------------------------------------------------------------------------
     void make_map()
     {
         for(auto it = all_elements.begin(); it != all_elements.end(); ++it)
@@ -123,14 +123,18 @@ class Perfect_Cache
             }
         }
     }
-
-    void swap(T element, int number_of_elements)
+    //--------------------------------------------------------------------------
+    void swap(T element)
     {
         int max = 0;
 
         for(T elem : perfect_cache)
         {
-            if(duplicate_elements.find(elem) == duplicate_elements.end()) 
+            if(!find_element_in_map(element))
+            {
+                break;
+            }
+            if(!find_element_in_map(elem)) 
             {
                 std::replace(perfect_cache.begin(), perfect_cache.end(), elem, element);
                 break;
@@ -149,21 +153,36 @@ class Perfect_Cache
             }
         }
     }
-
-    bool not_a_hit(T element, int number_of_elements)
+    //--------------------------------------------------------------------------
+    bool find_element_in_map (T element)
     {
-        if(cache_is_full())
+        if(duplicate_elements.find(element) != duplicate_elements.end())
         {
-            swap(element, number_of_elements);
+            return true;
         }
         else
         {
-            perfect_cache.emplace_back(element);
+            return false;
+        }
+    }
+    //--------------------------------------------------------------------------
+    bool not_a_hit(T element)
+    {
+        if(cache_is_full())
+        {
+            swap(element);
+        }
+        else 
+        {
+            if(find_element_in_map(element))
+            {
+                perfect_cache.emplace_back(element);
+            }
         }
         return false;
     }
-
-    bool perfect_hit_counter(T element, int number_of_elements)
+    //--------------------------------------------------------------------------
+    bool perfect_hit_counter(T element)
     {
         auto perfect_cache_it = std::find(perfect_cache.begin(), perfect_cache.end(), element);
 
@@ -173,10 +192,10 @@ class Perfect_Cache
         } 
         else
         {
-            return not_a_hit(element, number_of_elements);
+            return not_a_hit(element);
         }
     }
-
+    //--------------------------------------------------------------------------
     void update_map(T elem)
     {
         if(duplicate_elements.find(elem) != duplicate_elements.end())

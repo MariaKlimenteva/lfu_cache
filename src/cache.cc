@@ -46,10 +46,11 @@ int main(int argc, char** argv)
         for(auto elem : perfect.all_elements)
         {
             
-            if(perfect.perfect_hit_counter(elem, number_of_elements))
+            if(perfect.perfect_hit_counter(elem))
             {
                 perfect_hits += 1;
             }
+            perfect.update_map(elem);
         }
 
         std::cout << hits << " ";
@@ -83,11 +84,13 @@ int main(int argc, char** argv)
 
     for(auto elem : perfect.all_elements)
     {
-        if(perfect.perfect_hit_counter(elem, number_of_elements))
+        if(perfect.perfect_hit_counter(elem))
         {
             perfect_hits += 1;
         }
         perfect.update_map(elem);
+        // perfect.print_map();
+        // std::cout << "//-----------\n" << std::endl;
     }
 
     std::cout << hits << " ";
