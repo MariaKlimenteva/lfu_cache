@@ -65,8 +65,6 @@ class Perfect_Cache
     private:
     size_t size_; 
     std::list<T> perfect_cache;
-
-    public:
     std::unordered_map<T, std::vector<int>> duplicate_elements;
 
     public:
@@ -169,7 +167,7 @@ class Perfect_Cache
     {
         auto perfect_cache_it = std::find(perfect_cache.begin(), perfect_cache.end(), element);
 
-        if(perfect_cache_it != perfect_cache.end()) //нашли в кэше этот элемент
+        if(perfect_cache_it != perfect_cache.end()) 
         {            
             return true;
         } 
@@ -179,23 +177,19 @@ class Perfect_Cache
         }
     }
 
-    // void change_map_values(T elem, std::list<int>::iterator current_iterator, int index)
-    // {
-    //     if(duplicate_elements.find(elem) != duplicate_elements.end())//если элемент есть в map
-    //     {
-    //         // for (auto key : duplicate_elements) 
-    //         // {
-    //         //     for (auto element : key.second) 
-    //         //     {
-    //         //         if(element < index)
-    //         //         {
-    //         //             duplicate_elements[elem].erase(duplicate_elements.begin() + 1); // удаляем второй элемент вектора
-    //         //         }
-    //         //     }
-    //         // }
-    //         auto vector = current_iterator -> second;
-    //         vector.erase(std::remove(vector.begin(), vector.end(), index), vector.end()); // 
-    //     }
-    // }
+    void update_map(T elem)
+    {
+        if(duplicate_elements.find(elem) != duplicate_elements.end())
+        {
+            if(duplicate_elements[elem].size() > 2)
+            {
+                duplicate_elements[elem].erase(std::next(duplicate_elements[elem].begin()));
+            }
+            else
+            {
+                duplicate_elements.erase(elem);
+            }
+        }
+    }
 };
 //--------------------------------------------------------------------------

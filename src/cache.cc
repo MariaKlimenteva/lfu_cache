@@ -87,25 +87,7 @@ int main(int argc, char** argv)
         {
             perfect_hits += 1;
         }
-
-        auto current_iterator = std::find(perfect.all_elements.begin(), perfect.all_elements.end(), elem);
-        int index = std::distance(perfect.all_elements.begin(), current_iterator);
-
-        if(perfect.duplicate_elements.find(elem) != perfect.duplicate_elements.end())
-        {
-            if(perfect.duplicate_elements[elem].size() > 2)
-            {
-                perfect.duplicate_elements[elem].erase(std::next(perfect.duplicate_elements[elem].begin()));
-            }
-            else
-            {
-                perfect.duplicate_elements.erase(elem);
-            }
-        }
-        
-
-        // perfect.change_map_values(elem, current_iterator, index);
-        // если этот итератор больше чем значение в векторе у данного elem - значение надо удалить из вектора
+        perfect.update_map(elem);
     }
 
     std::cout << hits << " ";
