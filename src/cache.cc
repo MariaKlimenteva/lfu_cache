@@ -10,8 +10,8 @@ int main(int argc, char** argv)
 {
     size_t cache_size;
     int number_of_elements;
-    int hits;
-    int perfect_hits;
+    int hits = 0;
+    int perfect_hits = 0;
     //----------------------------------------------------------------------
     #ifdef TEST_PARAM
     std::ifstream tests;
@@ -89,8 +89,8 @@ int main(int argc, char** argv)
             perfect_hits += 1;
         }
         perfect.update_map(elem);
-        // perfect.print_map();
-        // std::cout << "//-----------\n" << std::endl;
+        std::cout << "----------" << std::endl;
+        perfect.print_map();
     }
 
     std::cout << hits << " ";
