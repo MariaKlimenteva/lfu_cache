@@ -65,9 +65,7 @@ int main(int argc, char** argv)
     std::cin >> cache_size >> number_of_elements;
     
     Cache<int> lfu{cache_size};
-    // Perfect_Cache<int> perfect{cache_size};
     std::unique_ptr<Perfect_Cache<int>> perfect(new Perfect_Cache<int>(cache_size));
-    // perfect->all_elements = std::make_unique<std::list<int>>();
 
     for(int i = 0; i < number_of_elements; i++)
     {
@@ -81,7 +79,7 @@ int main(int argc, char** argv)
 
         perfect->make_list(elem);
     }
-    
+    perfect->print_perfect_cache();
     perfect->make_map();
     for(auto elem : *(perfect->all_elements))
     {

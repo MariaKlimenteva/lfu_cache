@@ -65,20 +65,16 @@ class Perfect_Cache
 {
     private:
     size_t size_; 
-    // std::list<T> perfect_cache;
     std::unique_ptr<std::list<T>> perfect_cache; 
-    // std::unordered_map<T, std::vector<int>> duplicate_elements;
     std::unique_ptr<std::unordered_map<T, std::vector<int>>> duplicate_elements;
 
     public:
-    std::unique_ptr<std::list<T>> all_elements; 
-    // std::list<T> all_elements;
-
+    std::unique_ptr<std::list<T>> all_elements;
 
     Perfect_Cache(size_t size): size_(size), 
     perfect_cache(std::make_unique<std::list<T>>()), 
     all_elements(std::make_unique<std::list<T>>()), 
-    duplicate_elements(std::make_unique<std::unordered_map<T, std::vector<int>>>()){}
+    duplicate_elements(std::make_unique<std::unordered_map<T, std::vector<int>>>()) {}
     //--------------------------------------------------------------------------
     bool cache_is_full()
     {
@@ -92,7 +88,7 @@ class Perfect_Cache
     //--------------------------------------------------------------------------
     void print_map()
     {
-        for (const auto& pair : duplicate_elements) 
+        for (const auto& pair : (*duplicate_elements)) 
         {
             std::cout << pair.first << ": ";
             for (const auto& element : pair.second) 
@@ -107,7 +103,7 @@ class Perfect_Cache
     //--------------------------------------------------------------------------
     void print_perfect_cache()
     {
-        for(T elem : perfect_cache)
+        for(T elem : (*perfect_cache))
         {
             std::cout << " " << elem << std::endl;;
         }
