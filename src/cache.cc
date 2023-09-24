@@ -27,7 +27,7 @@ int main(int argc, char** argv)
         perfect_hits = 0;
 
         Cache<int> lfu{cache_size};
-        Perfect_Cache<int> perfect{cache_size};
+        std::unique_ptr<Perfect_Cache<int>> perfect(new Perfect_Cache<int>(cache_size));
         
         for(int i = 0; i < number_of_elements; i++)
         {
@@ -38,19 +38,19 @@ int main(int argc, char** argv)
             {
                 hits += 1;
             }
-            perfect.make_list(elem);
+            perfect->make_list(elem);
         }
                 
-        perfect.make_map();
+        perfect->make_map();
 
-        for(auto elem : perfect.all_elements)
+        for(auto elem : *(perfect->all_elements))
         {
             
-            if(perfect.perfect_hit_counter(elem))
+            if(perfect->perfect_hit_counter(elem))
             {
                 perfect_hits += 1;
             }
-            perfect.update_map(elem);
+            perfect->update_map(elem);
         }
 
         std::cout << hits << " ";
@@ -65,7 +65,9 @@ int main(int argc, char** argv)
     std::cin >> cache_size >> number_of_elements;
     
     Cache<int> lfu{cache_size};
-    Perfect_Cache<int> perfect{cache_size};
+    // Perfect_Cache<int> perfect{cache_size};
+    std::unique_ptr<Perfect_Cache<int>> perfect(new Perfect_Cache<int>(cache_size));
+    // perfect->all_elements = std::make_unique<std::list<int>>();
 
     for(int i = 0; i < number_of_elements; i++)
     {
@@ -77,18 +79,17 @@ int main(int argc, char** argv)
             hits += 1;
         }
 
-        perfect.make_list(elem);
+        perfect->make_list(elem);
     }
-    perfect.make_map();
-    // perfect.print_map();
-
-    for(auto elem : perfect.all_elements)
+    
+    perfect->make_map();
+    for(auto elem : *(perfect->all_elements))
     {
-        if(perfect.perfect_hit_counter(elem))
+        if(perfect->perfect_hit_counter(elem))
         {
             perfect_hits += 1;
         }
-        perfect.update_map(elem);
+        perfect->update_map(elem);
     }
 
     std::cout << hits << " ";

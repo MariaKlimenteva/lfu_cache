@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <iostream>
 #include <cmath>
+#include <memory>
 #include <vector>
 //--------------------------------------------------------------------------
 template<typename T, typename KeyT = int>
@@ -64,21 +65,29 @@ class Perfect_Cache
 {
     private:
     size_t size_; 
-    std::list<T> perfect_cache;
-    std::unordered_map<T, std::vector<int>> duplicate_elements;
+    // std::list<T> perfect_cache;
+    std::unique_ptr<std::list<T>> perfect_cache; 
+    // std::unordered_map<T, std::vector<int>> duplicate_elements;
+    std::unique_ptr<std::unordered_map<T, std::vector<int>>> duplicate_elements;
 
     public:
-    std::list<T> all_elements;
-    Perfect_Cache(size_t size): size_(size) {} 
+    std::unique_ptr<std::list<T>> all_elements; 
+    // std::list<T> all_elements;
+
+
+    Perfect_Cache(size_t size): size_(size), 
+    perfect_cache(std::make_unique<std::list<T>>()), 
+    all_elements(std::make_unique<std::list<T>>()), 
+    duplicate_elements(std::make_unique<std::unordered_map<T, std::vector<int>>>()){}
     //--------------------------------------------------------------------------
     bool cache_is_full()
     {
-        return perfect_cache.size() == size_;
+        return perfect_cache->size() == size_;
     }
     //--------------------------------------------------------------------------
     void make_list(T element)
     {
-        all_elements.emplace_back(element);
+        all_elements->emplace_back(element);
     }
     //--------------------------------------------------------------------------
     void print_map()
@@ -106,17 +115,17 @@ class Perfect_Cache
     //--------------------------------------------------------------------------
     void make_map()
     {
-        for(auto it = all_elements.begin(); it != all_elements.end(); ++it)
+        for(auto it = all_elements->begin(); it != all_elements->end(); ++it)
         {
-            auto index = std::distance(all_elements.begin(), it);
-            duplicate_elements[*it].emplace_back(index);
+            auto index = std::distance(all_elements->begin(), it);
+            (*duplicate_elements)[*it].emplace_back(index);
         }
 
-        for (auto it = duplicate_elements.begin(); it != duplicate_elements.end(); ) 
+        for (auto it = duplicate_elements->begin(); it != duplicate_elements->end(); ) 
         {
             if(it->second.size() < 2)
             {
-                it = duplicate_elements.erase(it);
+                it = duplicate_elements->erase(it);
             } 
             else 
             {
@@ -130,13 +139,13 @@ class Perfect_Cache
         int max = 0; 
         T max_elem;
         
-        for(T elem : perfect_cache)
+        for(T elem : (*perfect_cache))
         {
-            if(duplicate_elements[elem].size() > 0)
+            if((*duplicate_elements)[elem].size() > 0)
             {
-                if(duplicate_elements[elem].at(0) > max)
+                if((*duplicate_elements)[elem].at(0) > max)
                 {
-                    max = duplicate_elements[elem].at(0);
+                    max = (*duplicate_elements)[elem].at(0);
                     max_elem = elem;
                 }
             }
@@ -147,18 +156,18 @@ class Perfect_Cache
             }
         }
 
-        if(duplicate_elements[element].size() > 1)
+        if((*duplicate_elements)[element].size() > 1)
         {
-            if(duplicate_elements[element].at(1) < max)
+            if((*duplicate_elements)[element].at(1) < max)
             {
-                std::replace(perfect_cache.begin(), perfect_cache.end(), max_elem, element);
+                std::replace(perfect_cache->begin(), perfect_cache->end(), max_elem, element);
             }
         }
     }
     //--------------------------------------------------------------------------
     bool find_element_in_map(T element)
     {
-        if(duplicate_elements.find(element) != duplicate_elements.end())
+        if(duplicate_elements->find(element) != duplicate_elements->end())
         {
             return true;
         }
@@ -176,15 +185,15 @@ class Perfect_Cache
         }
         else 
         {
-            perfect_cache.emplace_back(element);
+            perfect_cache->emplace_back(element);
         }
     }
     //--------------------------------------------------------------------------
     bool perfect_hit_counter(T element)
     {
-        auto perfect_cache_it = std::find(perfect_cache.begin(), perfect_cache.end(), element);
+        auto perfect_cache_it = std::find(perfect_cache->begin(), perfect_cache->end(), element);
 
-        if(perfect_cache_it != perfect_cache.end()) 
+        if(perfect_cache_it != perfect_cache->end()) 
         {            
             return true;
         } 
@@ -200,15 +209,15 @@ class Perfect_Cache
     //--------------------------------------------------------------------------
     void update_map(T elem)
     {
-        if(duplicate_elements.find(elem) != duplicate_elements.end())
+        if(duplicate_elements->find(elem) != duplicate_elements->end())
         {
-            if(duplicate_elements[elem].size() > 1)
+            if((*duplicate_elements)[elem].size() > 1)
             {
-                duplicate_elements[elem].erase(duplicate_elements[elem].begin());
+                (*duplicate_elements)[elem].erase((*duplicate_elements)[elem].begin());
             }
             else
             {
-                duplicate_elements.erase(elem);
+                duplicate_elements->erase(elem);
             }
         }
     }
