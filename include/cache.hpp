@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------------
 #include <iterator>
 #include <algorithm>
-#include <list>
+#include <vector>
 #include <unordered_map>
 #include <iostream>
 #include <cmath>
@@ -17,7 +17,7 @@ class Cache
 
     private:
     size_t size_; 
-    std::list<T> cache_;
+    std::vector<T> cache_;
     std::unordered_map<T, KeyT> hash_;
 
     bool cache_is_full()
@@ -48,7 +48,7 @@ class Cache
                 [](const std::pair<const T, KeyT> &a, const std::pair<const T, KeyT> &b) 
                 { return a.second < b.second; }); 
 
-                cache_.remove(min.first);
+                cache_.erase(std::find(cache_.begin(), cache_.end(), min.first));
                 cache_.emplace_back(element);
 
                 hash_.erase(min.first);
@@ -65,15 +65,15 @@ class Perfect_Cache
 {
     private:
     size_t size_; 
-    std::unique_ptr<std::list<T>> perfect_cache; 
+    std::unique_ptr<std::vector<T>> perfect_cache; 
     std::unique_ptr<std::unordered_map<T, std::vector<int>>> duplicate_elements;
 
     public:
-    std::unique_ptr<std::list<T>> all_elements;
+    std::unique_ptr<std::vector<T>> all_elements;
 
     Perfect_Cache(size_t size): size_(size), 
-    perfect_cache(std::make_unique<std::list<T>>()), 
-    all_elements(std::make_unique<std::list<T>>()), 
+    perfect_cache(std::make_unique<std::vector<T>>()), 
+    all_elements(std::make_unique<std::vector<T>>()), 
     duplicate_elements(std::make_unique<std::unordered_map<T, std::vector<int>>>()) {}
     //--------------------------------------------------------------------------
     bool cache_is_full()
@@ -111,7 +111,7 @@ class Perfect_Cache
     //--------------------------------------------------------------------------
     void make_map()
     {
-        for(auto it = all_elements->begin(); it != all_elements->end(); ++it)
+        for(auto it = all_elements->begin(); it != all_elements->end(); ++it) // причина зависания
         {
             auto index = std::distance(all_elements->begin(), it);
             (*duplicate_elements)[*it].emplace_back(index);

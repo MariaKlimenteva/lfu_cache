@@ -64,7 +64,7 @@ int main(int argc, char** argv)
     
     Cache<int> lfu{cache_size};
     std::unique_ptr<Perfect_Cache<int>> perfect(new Perfect_Cache<int>(cache_size));
-    // std::cout << number_of_elements << std::endl;
+    
 
     for(int i = 0; i < number_of_elements; i++)
     {
@@ -77,15 +77,9 @@ int main(int argc, char** argv)
         }
 
         perfect->make_list(elem);
-        std::cout << i << std::endl;
     }
-
-    // std::cout << "ghb" << std::endl;
-
-    perfect->print_perfect_cache();
-    perfect->make_map();
-
-    // perfect->print_map();
+    
+    perfect->make_map();     
 
     for(auto elem : *(perfect->all_elements))
     {
@@ -96,7 +90,7 @@ int main(int argc, char** argv)
         perfect->update_map(elem);
     }
 
-    // std::cout << hits << " ";
+    std::cout << hits << " ";
     std::cout << perfect_hits << "\n";
 
     #endif
