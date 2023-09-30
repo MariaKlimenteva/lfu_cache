@@ -69,32 +69,29 @@ int main(int argc, char** argv)
     for(int i = 0; i < number_of_elements; i++)
     {
         
-        // std::cin >> elem;
-        scanf("%d", &elem);
-
-        // std::cout << i << std::endl;
+        std::cin >> elem;
 
         if(lfu->lookup_update(elem, cache_size, number_of_elements))
         {
             hits += 1;
         }        
-        // perfect->make_list(elem);
+        perfect->make_list(elem);
     }
 
     
-    // perfect->make_map();     
+    perfect->make_map();     
 
-    // for(auto elem : *(perfect->all_elements))
-    // {
-    //     if(perfect->perfect_hit_counter(elem))
-    //     {
-    //         perfect_hits += 1;
-    //     }
-    //     perfect->update_map(elem);
-    // }
+    for(auto elem : *(perfect->all_elements))
+    {
+        if(perfect->perfect_hit_counter(elem))
+        {
+            perfect_hits += 1;
+        }
+        perfect->update_map(elem);
+    }
 
     std::cout << hits << " ";
-    // std::cout << perfect_hits << "\n";
+    std::cout << perfect_hits << "\n";
 
     #endif
     //----------------------------------------------------------------------

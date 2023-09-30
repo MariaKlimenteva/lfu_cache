@@ -5,6 +5,9 @@
 #include <unordered_map>
 #include <iostream>
 #include <memory>
+#include <bits/stdc++.h>
+
+using namespace std::chrono;
 // #include <execution>
 // #include <tbb/parallel_for.h>
 //--------------------------------------------------------------------------
@@ -13,8 +16,8 @@ class Cache
 {
     private:
     size_t size_; 
-    std::unique_ptr<std::vector<T>> cache_;
-    // std::unique_ptr<std::unordered_map<T,T>> cache_;
+    
+    std::unique_ptr<std::unordered_map<T,T>> cache_;
     std::unique_ptr<std::unordered_map<T, KeyT>> hash_;
 
     inline bool cache_is_full()
@@ -24,13 +27,14 @@ class Cache
 
     public:
     Cache(size_t size): size_(size),
-    // cache_(std::make_unique<std::unordered_map<T,T>>()),
-    cache_(std::make_unique<std::vector<T>>()),
+    cache_(std::make_unique<std::unordered_map<T,T>>()),
+    
     hash_(std::make_unique<std::unordered_map<T, KeyT>>()) {} 
 
     inline bool find_elem_in_cache(T element)
     {
-        if(auto iter = std::find(cache_->begin(), cache_->end(), element); iter != cache_->end())
+        auto start = high_resolution_clock::now();
+        if(auto iter = cache_->find(element); iter != cache_->end())
         {
             return true;
         }
@@ -38,6 +42,9 @@ class Cache
         {
             return false;
         }
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<milliseconds>(stop - start);
+
     }
 
     inline void is_a_hit(T element, int counter)
@@ -53,31 +60,31 @@ class Cache
     {
         if(!cache_is_full())
         {
-            cache_->emplace_back(element);
+            cache_->emplace(element, element);
             hash_->emplace(element, counter);
             (*hash_)[element]++;
         }
-        else
+        else // тут виснет
         {
             int min_element = 0;
             
-            for(auto elem: (*cache_))
-            {
-                if((*hash_)[elem] == 0)
-                {
-                    min = 0;
-                    min_element = elem;
-                    break;
-                }
-                else
-                {
-                    if((*hash_)[elem] < min)
-                    {
-                        min = (*hash_)[elem];
-                        min_element = elem;
-                    }
-                }
-            }
+            // for(auto elem: (*cache_))
+            // {
+            //     if((*hash_)[elem.second] == 0)
+            //     {
+            //         min = 0;
+            //         min_element = elem.second;
+            //         break;
+            //     }
+            //     else
+            //     {
+            //         if((*hash_)[elem.second] < min)
+            //         {
+            //             min = (*hash_)[elem.second];
+            //             min_element = elem.second;
+            //         }
+            //     }
+            // }
             
             if((*hash_)[element] < min)
             {
@@ -87,8 +94,8 @@ class Cache
             
             if(min_element != element)
             {
-                cache_->erase(std::find(cache_->begin(), cache_->end(), min_element));
-                cache_->emplace_back(element);
+                cache_->erase(min_element);
+                cache_->emplace(element, element);
                 
                 if(hash_->find(element) == hash_->end())
                 {
@@ -103,6 +110,7 @@ class Cache
     {
         int counter = 0;
         int min = number_of_elements;
+        // std::cout << cache_->size() << std::endl;
 
         if(find_elem_in_cache(element)) // это становится долго после того как полностью заполнили кэш
         {
@@ -114,7 +122,7 @@ class Cache
             // time_t start, end;
             // time(&start);
             
-            not_a_hit(element, counter, min);
+            not_a_hit(element, counter, min); //теперь тут виснет
 
             // time(&end);
             // double time_taken = double(end - start);
