@@ -1,61 +1,126 @@
 #pragma once
 //--------------------------------------------------------------------------
-#include <iterator>
 #include <algorithm>
 #include <vector>
 #include <unordered_map>
 #include <iostream>
-#include <cmath>
 #include <memory>
-#include <vector>
+// #include <execution>
+// #include <tbb/parallel_for.h>
 //--------------------------------------------------------------------------
 template<typename T, typename KeyT = int>
 class Cache 
 {
-    public:
-    Cache(size_t size): size_(size) {} 
-
     private:
     size_t size_; 
-    std::vector<T> cache_;
-    std::unordered_map<T, KeyT> hash_;
+    std::unique_ptr<std::vector<T>> cache_;
+    // std::unique_ptr<std::unordered_map<T,T>> cache_;
+    std::unique_ptr<std::unordered_map<T, KeyT>> hash_;
 
-    bool cache_is_full()
+    inline bool cache_is_full()
     {
-        return cache_.size() == size_;
+        return cache_->size() == size_;
     }
 
     public:
-    bool lookup_update(T element)
+    Cache(size_t size): size_(size),
+    // cache_(std::make_unique<std::unordered_map<T,T>>()),
+    cache_(std::make_unique<std::vector<T>>()),
+    hash_(std::make_unique<std::unordered_map<T, KeyT>>()) {} 
+
+    inline bool find_elem_in_cache(T element)
     {
-        int counter = 0;
-        if(auto iter = hash_.find(element); iter != hash_.end())
+        if(auto iter = std::find(cache_->begin(), cache_->end(), element); iter != cache_->end())
         {
-            hash_[element]++;
             return true;
         }
         else
         {
-            if(!cache_is_full())
+            return false;
+        }
+    }
+
+    inline void is_a_hit(T element, int counter)
+    {
+        if(hash_->find(element) == hash_->end())
+        {
+            hash_->emplace(element, counter);
+        }
+        (*hash_)[element]++;
+    }
+
+    inline void not_a_hit(T element, int counter, int min)
+    {
+        if(!cache_is_full())
+        {
+            cache_->emplace_back(element);
+            hash_->emplace(element, counter);
+            (*hash_)[element]++;
+        }
+        else
+        {
+            int min_element = 0;
+            
+            for(auto elem: (*cache_))
             {
-                cache_.emplace_back(element);
-                hash_.emplace(element, counter);
-                return false;
+                if((*hash_)[elem] == 0)
+                {
+                    min = 0;
+                    min_element = elem;
+                    break;
+                }
+                else
+                {
+                    if((*hash_)[elem] < min)
+                    {
+                        min = (*hash_)[elem];
+                        min_element = elem;
+                    }
+                }
             }
-            else
+            
+            if((*hash_)[element] < min)
             {
-                std::pair<T, KeyT> min = *std::min_element(hash_.begin(), hash_.end(),
-                [](const std::pair<const T, KeyT> &a, const std::pair<const T, KeyT> &b) 
-                { return a.second < b.second; }); 
-
-                cache_.erase(std::find(cache_.begin(), cache_.end(), min.first));
-                cache_.emplace_back(element);
-
-                hash_.erase(min.first);
-                hash_.emplace(element, counter);
+                min = (*hash_)[element];
+                min_element = element;
+            }
+            
+            if(min_element != element)
+            {
+                cache_->erase(std::find(cache_->begin(), cache_->end(), min_element));
+                cache_->emplace_back(element);
                 
-                return false;
+                if(hash_->find(element) == hash_->end())
+                {
+                    hash_->emplace(element, counter);
+                }
+                (*hash_)[element]++;
             }
+        }
+    }
+
+    inline bool lookup_update(T element, size_t cache_size, int number_of_elements)
+    {
+        int counter = 0;
+        int min = number_of_elements;
+
+        if(find_elem_in_cache(element)) // это становится долго после того как полностью заполнили кэш
+        {
+            is_a_hit(element, counter);
+            return true;
+        }
+        else
+        {
+            // time_t start, end;
+            // time(&start);
+            
+            not_a_hit(element, counter, min);
+
+            // time(&end);
+            // double time_taken = double(end - start);
+            // std::cout << "Time taken by not_a_hit : " << time_taken << "\n";
+
+            return false;
         }
     } 
 };
@@ -111,7 +176,7 @@ class Perfect_Cache
     //--------------------------------------------------------------------------
     void make_map()
     {
-        for(auto it = all_elements->begin(); it != all_elements->end(); ++it) // причина зависания
+        for(auto it = all_elements->begin(); it != all_elements->end(); ++it)
         {
             auto index = std::distance(all_elements->begin(), it);
             (*duplicate_elements)[*it].emplace_back(index);

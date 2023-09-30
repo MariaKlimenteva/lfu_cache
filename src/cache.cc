@@ -1,6 +1,6 @@
 #include "cache.hpp"
 
-#include <iostream>
+// #include <iostream>
 #include <fstream>
 #include <cstdio>
 //--------------------------------------------------------------------------
@@ -32,7 +32,7 @@ int main(int argc, char** argv)
             int elem;
             tests >> elem;
 
-            if(lfu.lookup_update(elem))
+            if(lfu.lookup_update(elem, cache_size, number_of_elements))
             {
                 hits += 1;
             }
@@ -62,36 +62,39 @@ int main(int argc, char** argv)
     #ifndef TEST_PARAM
     std::cin >> cache_size >> number_of_elements;
     
-    Cache<int> lfu{cache_size};
+    std::unique_ptr<Cache<int>> lfu(new Cache<int>{cache_size});
     std::unique_ptr<Perfect_Cache<int>> perfect(new Perfect_Cache<int>(cache_size));
     
-
+    int elem;
     for(int i = 0; i < number_of_elements; i++)
     {
-        int elem;
-        std::cin >> elem;
+        
+        // std::cin >> elem;
+        scanf("%d", &elem);
 
-        if(lfu.lookup_update(elem))
+        // std::cout << i << std::endl;
+
+        if(lfu->lookup_update(elem, cache_size, number_of_elements))
         {
             hits += 1;
-        }
-
-        perfect->make_list(elem);
+        }        
+        // perfect->make_list(elem);
     }
+
     
-    perfect->make_map();     
+    // perfect->make_map();     
 
-    for(auto elem : *(perfect->all_elements))
-    {
-        if(perfect->perfect_hit_counter(elem))
-        {
-            perfect_hits += 1;
-        }
-        perfect->update_map(elem);
-    }
+    // for(auto elem : *(perfect->all_elements))
+    // {
+    //     if(perfect->perfect_hit_counter(elem))
+    //     {
+    //         perfect_hits += 1;
+    //     }
+    //     perfect->update_map(elem);
+    // }
 
     std::cout << hits << " ";
-    std::cout << perfect_hits << "\n";
+    // std::cout << perfect_hits << "\n";
 
     #endif
     //----------------------------------------------------------------------
