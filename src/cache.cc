@@ -65,6 +65,9 @@ int main(int argc, char** argv)
     std::unique_ptr<Cache<int>> lfu(new Cache<int>{cache_size});
     std::unique_ptr<Perfect_Cache<int>> perfect(new Perfect_Cache<int>(cache_size));
     
+    // time_t start, end;
+    // time(&start);
+
     int elem;
     for(int i = 0; i < number_of_elements; i++)
     {
@@ -77,7 +80,7 @@ int main(int argc, char** argv)
         }        
         perfect->make_list(elem);
     }
-
+    
     
     perfect->make_map();     
 
@@ -89,9 +92,12 @@ int main(int argc, char** argv)
         }
         perfect->update_map(elem);
     }
-
+    // time(&end);
+    // double time_taken = double(end - start);
+    // std::cout << "Time taken : " << time_taken << "\n";
     std::cout << hits << " ";
     std::cout << perfect_hits << "\n";
+
 
     #endif
     //----------------------------------------------------------------------

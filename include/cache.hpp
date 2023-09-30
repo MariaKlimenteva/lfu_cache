@@ -3,13 +3,10 @@
 #include <algorithm>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <iostream>
 #include <memory>
 #include <bits/stdc++.h>
-
-using namespace std::chrono;
-// #include <execution>
-// #include <tbb/parallel_for.h>
 //--------------------------------------------------------------------------
 template<typename T, typename KeyT = int>
 class Cache 
@@ -33,7 +30,6 @@ class Cache
 
     inline bool find_elem_in_cache(T element)
     {
-        auto start = high_resolution_clock::now();
         if(auto iter = cache_->find(element); iter != cache_->end())
         {
             return true;
@@ -42,9 +38,6 @@ class Cache
         {
             return false;
         }
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<milliseconds>(stop - start);
-
     }
 
     inline void is_a_hit(T element, int counter)
@@ -64,27 +57,9 @@ class Cache
             hash_->emplace(element, counter);
             (*hash_)[element]++;
         }
-        else // тут виснет
+        else 
         {
             int min_element = 0;
-            
-            // for(auto elem: (*cache_))
-            // {
-            //     if((*hash_)[elem.second] == 0)
-            //     {
-            //         min = 0;
-            //         min_element = elem.second;
-            //         break;
-            //     }
-            //     else
-            //     {
-            //         if((*hash_)[elem.second] < min)
-            //         {
-            //             min = (*hash_)[elem.second];
-            //             min_element = elem.second;
-            //         }
-            //     }
-            // }
             
             if((*hash_)[element] < min)
             {
@@ -119,14 +94,9 @@ class Cache
         }
         else
         {
-            // time_t start, end;
-            // time(&start);
-            
-            not_a_hit(element, counter, min); //теперь тут виснет
 
-            // time(&end);
-            // double time_taken = double(end - start);
-            // std::cout << "Time taken by not_a_hit : " << time_taken << "\n";
+            
+            not_a_hit(element, counter, min); //теперь тут виснеn
 
             return false;
         }
@@ -138,14 +108,14 @@ class Perfect_Cache
 {
     private:
     size_t size_; 
-    std::unique_ptr<std::vector<T>> perfect_cache; 
+    std::unique_ptr<std::unordered_set<T>> perfect_cache; 
     std::unique_ptr<std::unordered_map<T, std::vector<int>>> duplicate_elements;
 
     public:
     std::unique_ptr<std::vector<T>> all_elements;
 
     Perfect_Cache(size_t size): size_(size), 
-    perfect_cache(std::make_unique<std::vector<T>>()), 
+    perfect_cache(std::make_unique<std::unordered_set<T>>()), 
     all_elements(std::make_unique<std::vector<T>>()), 
     duplicate_elements(std::make_unique<std::unordered_map<T, std::vector<int>>>()) {}
     //--------------------------------------------------------------------------
@@ -229,7 +199,9 @@ class Perfect_Cache
         {
             if((*duplicate_elements)[element].at(1) < max)
             {
-                std::replace(perfect_cache->begin(), perfect_cache->end(), max_elem, element);
+                // std::replace(perfect_cache->begin(), perfect_cache->end(), max_elem, element);
+                perfect_cache->erase(max_elem);
+                perfect_cache->emplace(element);
             }
         }
     }
@@ -254,13 +226,13 @@ class Perfect_Cache
         }
         else 
         {
-            perfect_cache->emplace_back(element);
+            perfect_cache->emplace(element);
         }
     }
     //--------------------------------------------------------------------------
     bool perfect_hit_counter(T element)
     {
-        auto perfect_cache_it = std::find(perfect_cache->begin(), perfect_cache->end(), element);
+        auto perfect_cache_it = perfect_cache->find(element);
 
         if(perfect_cache_it != perfect_cache->end()) 
         {            
