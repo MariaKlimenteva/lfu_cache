@@ -113,6 +113,7 @@ class Perfect_Cache
 
     public:
     std::unique_ptr<std::vector<T>> all_elements;
+    // std::vector<T> max_in_all_elements;
 
     Perfect_Cache(size_t size): size_(size), 
     perfect_cache(std::make_unique<std::unordered_set<T>>()), 
@@ -173,10 +174,10 @@ class Perfect_Cache
         }
     }
     //--------------------------------------------------------------------------
-    void swap(T element)
+    void swap(T element) 
     {
         int max = 0; 
-        T max_elem;
+        T max_elem = 0;
         
         for(T elem : (*perfect_cache))
         {
@@ -190,7 +191,7 @@ class Perfect_Cache
             }
             else
             {
-                max_elem = elem;
+                // max_elem = element;
                 break;
             }
         }
@@ -199,7 +200,6 @@ class Perfect_Cache
         {
             if((*duplicate_elements)[element].at(1) < max)
             {
-                // std::replace(perfect_cache->begin(), perfect_cache->end(), max_elem, element);
                 perfect_cache->erase(max_elem);
                 perfect_cache->emplace(element);
             }

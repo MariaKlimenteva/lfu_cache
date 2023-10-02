@@ -82,7 +82,7 @@ int main(int argc, char** argv)
     }
     
     
-    perfect->make_map();     
+    perfect->make_map();     //добавляет секунду
 
     for(auto elem : *(perfect->all_elements))
     {
@@ -92,6 +92,7 @@ int main(int argc, char** argv)
         }
         perfect->update_map(elem);
     }
+
     // time(&end);
     // double time_taken = double(end - start);
     // std::cout << "Time taken : " << time_taken << "\n";
