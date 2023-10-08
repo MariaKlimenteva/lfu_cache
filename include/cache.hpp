@@ -6,16 +6,15 @@
 #include <unordered_set>
 #include <iostream>
 #include <memory>
-#include <bits/stdc++.h>
 //--------------------------------------------------------------------------
 template<typename T, typename KeyT = int>
 class Cache 
 {
     private:
     size_t size_; 
+    int min_element = 0;
     
     std::unique_ptr<std::unordered_map<T,T>> cache_;
-    std::unique_ptr<std::unordered_map<T, KeyT>> hash_;
 
     inline bool cache_is_full()
     {
@@ -24,9 +23,7 @@ class Cache
 
     public:
     Cache(size_t size): size_(size),
-    cache_(std::make_unique<std::unordered_map<T,T>>()),
-    
-    hash_(std::make_unique<std::unordered_map<T, KeyT>>()) {} 
+    cache_(std::make_unique<std::unordered_map<T,T>>()){}
 
     inline bool find_elem_in_cache(T element)
     {
@@ -40,44 +37,67 @@ class Cache
         }
     }
 
-    inline void is_a_hit(T element, int counter)
+    inline void is_a_hit(T element, int counter, int min)
     {
-        if(hash_->find(element) == hash_->end())
+        (*cache_)[element]++;
+        
+        if(size_ > 100000)
         {
-            hash_->emplace(element, counter);
+            if(cache_is_full()) // пересчет минимального
+            {
+                for(auto elem: (*cache_))  
+                {
+                    min = 3050000;
+                    if((*cache_)[elem.first] < min)
+                    {
+                        min = (*cache_)[elem.first];
+                        min_element = elem.first;
+                    }
+                }
+            }
         }
-        (*hash_)[element]++;
     }
 
     inline void not_a_hit(T element, int counter, int min)
     {
         if(!cache_is_full())
         {
-            cache_->emplace(element, element);
-            hash_->emplace(element, counter);
-            (*hash_)[element]++;
+            cache_->emplace(element, counter);
+            (*cache_)[element]++;
+
+            if(size_ > 100000)
+            {
+                if(cache_->size() == size_ - 1) //перед заполнением кэша узнаем 1 раз min
+                {
+                    for(auto elem: (*cache_))
+                    {
+                        if((*cache_)[elem.first] < min)
+                        {
+                            min = (*cache_)[elem.first];
+                            min_element = elem.first;
+                        }
+                    }
+                }
+                
+            }
         }
         else 
-        {
-            int min_element = 0;
-            
-            if((*hash_)[element] < min)
+        {          
+            if(size_ < 100000)
             {
-                min = (*hash_)[element];
-                min_element = element;
-            }
-            
-            if(min_element != element)
-            {
-                cache_->erase(min_element);
-                cache_->emplace(element, element);
-                
-                if(hash_->find(element) == hash_->end())
+                for(auto elem: (*cache_))  // 0m0.050s для теста 11
                 {
-                    hash_->emplace(element, counter);
-                }
-                (*hash_)[element]++;
+                    if((*cache_)[elem.first] < min)
+                    {
+                        min = (*cache_)[elem.first];
+                        min_element = elem.first;
+                    }
+                } 
             }
+            
+            cache_->erase(min_element);
+            cache_->emplace(element, counter);
+            (*cache_)[element]++;
         }
     }
 
@@ -85,19 +105,15 @@ class Cache
     {
         int counter = 0;
         int min = number_of_elements;
-        // std::cout << cache_->size() << std::endl;
 
-        if(find_elem_in_cache(element)) // это становится долго после того как полностью заполнили кэш
+        if(find_elem_in_cache(element))
         {
-            is_a_hit(element, counter);
+            is_a_hit(element, counter, min);
             return true;
         }
         else
         {
-
-            
-            not_a_hit(element, counter, min); //теперь тут виснеn
-
+            not_a_hit(element, counter, min);
             return false;
         }
     } 
@@ -113,7 +129,6 @@ class Perfect_Cache
 
     public:
     std::unique_ptr<std::vector<T>> all_elements;
-    // std::vector<T> max_in_all_elements;
 
     Perfect_Cache(size_t size): size_(size), 
     perfect_cache(std::make_unique<std::unordered_set<T>>()), 
@@ -191,7 +206,6 @@ class Perfect_Cache
             }
             else
             {
-                // max_elem = element;
                 break;
             }
         }
