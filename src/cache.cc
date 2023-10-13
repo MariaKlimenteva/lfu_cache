@@ -65,18 +65,22 @@ int main(int argc, char** argv)
     std::unique_ptr<Perfect_Cache<int>> perfect(new Perfect_Cache<int>(cache_size));
 
     int elem;
+
     for(int i = 0; i < number_of_elements; i++)
     {
         
         std::cin >> elem;
+        int min = number_of_elements;
 
-        if(lfu->lookup_update(elem, cache_size, number_of_elements))
+        if(lfu->lookup_update(elem, cache_size, number_of_elements, min))
         {
             hits += 1;
         }  
-        // std::cout << i << std::endl;
+        // lfu->print_cache();
+        // std::cout << "----------------//" << std::endl;
         perfect->make_list(elem); 
     }
+    // lfu->print_cache();
 
     perfect->make_map();
 

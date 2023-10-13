@@ -13,19 +13,20 @@ class Cache
     private:
     size_t size_; 
     int min_element = 0;
+    int LARGE_CACHE_SIZE = 100000;
     
-    std::unique_ptr<std::unordered_map<T,T>> cache_;
+    std::unique_ptr<std::unordered_map<T, T>> cache_;
 
-    inline bool cache_is_full()
+    bool cache_is_full()
     {
         return cache_->size() == size_;
     }
 
     public:
     Cache(size_t size): size_(size),
-    cache_(std::make_unique<std::unordered_map<T,T>>()){}
-
-    inline bool find_elem_in_cache(T element)
+    cache_(std::make_unique<std::unordered_map<T, T>>()) {}
+    //-----------------------------------------------------------------------
+    bool find_elem_in_cache(T element)
     {
         if(auto iter = cache_->find(element); iter != cache_->end())
         {
@@ -36,79 +37,58 @@ class Cache
             return false;
         }
     }
-
-    inline void is_a_hit(T element, int counter, int min)
+    //-----------------------------------------------------------------------
+    void print_cache()
     {
-        (*cache_)[element]++;
-        
-        if(size_ > 100000)
+        for(auto pair: (*cache_))
         {
-            if(cache_is_full()) // пересчет минимального
-            {
-                for(auto elem: (*cache_))  
-                {
-                    min = 3050000;
-                    if((*cache_)[elem.first] < min)
-                    {
-                        min = (*cache_)[elem.first];
-                        min_element = elem.first;
-                    }
-                }
-            }
+            std::cout << pair.first << ": " << pair.second << std::endl;
         }
     }
-
-    inline void not_a_hit(T element, int counter, int min)
+    //-----------------------------------------------------------------------
+    void is_a_hit(T element)
+    {
+        (*cache_)[element]++;
+    }
+    //-----------------------------------------------------------------------
+    void not_a_hit(T element, int counter, int min)
     {
         if(!cache_is_full())
         {
             cache_->emplace(element, counter);
             (*cache_)[element]++;
 
-            if(size_ > 100000)
-            {
-                if(cache_->size() == size_ - 1) //перед заполнением кэша узнаем 1 раз min
-                {
-                    for(auto elem: (*cache_))
-                    {
-                        if((*cache_)[elem.first] < min)
-                        {
-                            min = (*cache_)[elem.first];
-                            min_element = elem.first;
-                        }
-                    }
-                }
-                
-            }
+            min_element = element;
+            min = (*cache_)[element];
         }
         else 
         {          
-            if(size_ < 100000)
+            if(element != min_element)
             {
-                for(auto elem: (*cache_))  // 0m0.050s для теста 11
+                for(auto elem: (*cache_))
                 {
                     if((*cache_)[elem.first] < min)
                     {
                         min = (*cache_)[elem.first];
                         min_element = elem.first;
                     }
-                } 
+                }
             }
-            
+
+            // std::cout << min_element << std::endl;
             cache_->erase(min_element);
             cache_->emplace(element, counter);
             (*cache_)[element]++;
         }
     }
-
-    inline bool lookup_update(T element, size_t cache_size, int number_of_elements)
+    //-----------------------------------------------------------------------
+    bool lookup_update(T element, size_t cache_size, int number_of_elements, int min)
     {
         int counter = 0;
-        int min = number_of_elements;
 
         if(find_elem_in_cache(element))
         {
-            is_a_hit(element, counter, min);
+            is_a_hit(element);
             return true;
         }
         else
